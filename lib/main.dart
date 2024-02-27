@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_story_app/conf/route/routes_config.dart';
-import 'package:flutter_story_app/features/story/presentation/screen/home/home_screen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_story_app/config/routes/route_config.dart';
+import 'package:flutter_story_app/di/injection.dart';
+import 'package:flutter_story_app/features/story/presentation/blocs/login/login_bloc.dart';
+import 'package:flutter_story_app/features/story/presentation/blocs/register/register_bloc.dart';
+import 'package:flutter_story_app/features/story/presentation/blocs/story/story_bloc.dart';
+import 'package:flutter_story_app/features/story/presentation/blocs/story/story_event.dart';
+import 'package:flutter_story_app/features/story/presentation/screens/register_screen.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  initializeDependencies();
   runApp(const MyApp());
 }
 
@@ -12,17 +20,30 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Story App',
-      onGenerateRoute: RoutesConfig().generateRoutes,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.indigoAccent,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<LoginBloc>(
+          create: (context) => injection(),
         ),
-        useMaterial3: true,
+        BlocProvider<RegisterBloc>(
+          create: (context) => injection(),
+        ),
+        BlocProvider<StoryBloc>(
+          create: (context) => injection()..add(const GetStoriesEvent()),
+        ),
+      ],
+      child: MaterialApp(
+        title: 'Flutter Story App',
+        onGenerateRoute: generateRoute,
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: Colors.indigoAccent,
+          ),
+          useMaterial3: true,
+        ),
+        debugShowCheckedModeBanner: false,
+        home: RegisterScreen(),
       ),
-      debugShowCheckedModeBanner: false,
-      home: HomeScreen(),
     );
   }
 }
