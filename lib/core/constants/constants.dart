@@ -4,4 +4,7 @@ class Constants {
   static const String addNewStory = '/stories';
   static const String login = '/login';
   static const String register = '/register';
+
+  static const String tokenKey = 'tokenKey';
+  static const String loginKey = 'loginKey';
 }

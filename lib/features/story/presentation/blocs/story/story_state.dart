@@ -1,17 +1,14 @@
-import 'package:equatable/equatable.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter_story_app/features/story/data/models/responses/story/story_response.dart';
 
-abstract class StoryState extends Equatable {
+abstract class StoryState {
   final StoryResponse? response;
-  final String? errorMessage;
+  final DioException? error;
 
   const StoryState({
     this.response,
-    this.errorMessage,
+    this.error,
   });
-
-  @override
-  List<Object?> get props => [response!, errorMessage!];
 }
 
 class StoryLoadingState extends StoryState {
@@ -19,8 +16,7 @@ class StoryLoadingState extends StoryState {
 }
 
 class StoryErrorState extends StoryState {
-  const StoryErrorState(String? errorMessage)
-      : super(errorMessage: errorMessage);
+  const StoryErrorState(DioException error) : super(error: error);
 }
 
 class StorySuccessState extends StoryState {

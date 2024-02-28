@@ -13,42 +13,12 @@ class _ApiService implements ApiService {
     this._dio, {
     this.baseUrl,
   }) {
-    baseUrl ??= 'https://story-api.dicoding.dev/v1';
+    baseUrl ??= 'https://story-api.dicoding.dev/v1/';
   }
 
   final Dio _dio;
 
   String? baseUrl;
-
-  @override
-  Future<HttpResponse<StoryResponse>> getAllStories(
-      String authorization) async {
-    final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{r'Authorization': authorization};
-    _headers.removeWhere((k, v) => v == null);
-    const Map<String, dynamic>? _data = null;
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<HttpResponse<StoryResponse>>(Options(
-      method: 'GET',
-      headers: _headers,
-      extra: _extra,
-    )
-            .compose(
-              _dio.options,
-              '/stories',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
-    final value = StoryResponse.fromJson(_result.data!);
-    final httpResponse = HttpResponse(value, _result);
-    return httpResponse;
-  }
 
   @override
   Future<HttpResponse<LoginResponse>> loginUser(
@@ -64,14 +34,14 @@ class _ApiService implements ApiService {
     };
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<HttpResponse<LoginResponse>>(Options(
-      method: 'GET',
+      method: 'POST',
       headers: _headers,
       extra: _extra,
       contentType: 'application/x-www-form-urlencoded',
     )
             .compose(
               _dio.options,
-              '/login',
+              'login',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -95,20 +65,20 @@ class _ApiService implements ApiService {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = {
-      'username': username,
+      'name': username,
       'email': email,
       'password': password,
     };
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<HttpResponse<RegisterResponse>>(Options(
-      method: 'GET',
+      method: 'POST',
       headers: _headers,
       extra: _extra,
       contentType: 'application/x-www-form-urlencoded',
     )
             .compose(
               _dio.options,
-              '/register',
+              'register',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -123,9 +93,39 @@ class _ApiService implements ApiService {
   }
 
   @override
+  Future<HttpResponse<StoryResponse>> getAllStories(
+      String authorization) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Authorization': authorization};
+    _headers.removeWhere((k, v) => v == null);
+    const Map<String, dynamic>? _data = null;
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<HttpResponse<StoryResponse>>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              'stories',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = StoryResponse.fromJson(_result.data!);
+    final httpResponse = HttpResponse(value, _result);
+    return httpResponse;
+  }
+
+  @override
   Future<HttpResponse<DetailResponse>> getDetailStory(
-    String id,
     String authorization,
+    String id,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -140,7 +140,7 @@ class _ApiService implements ApiService {
     )
             .compose(
               _dio.options,
-              '/stories/${id}',
+              'stories/${id}',
               queryParameters: queryParameters,
               data: _data,
             )

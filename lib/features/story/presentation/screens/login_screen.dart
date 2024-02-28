@@ -6,6 +6,8 @@ import 'package:flutter_story_app/config/routes/screens.dart';
 import 'package:flutter_story_app/config/themes/typography.dart';
 import 'package:flutter_story_app/features/story/presentation/blocs/login/login_bloc.dart';
 import 'package:flutter_story_app/features/story/presentation/blocs/login/login_event.dart';
+import 'package:flutter_story_app/features/story/presentation/blocs/login/login_state.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class LoginScreen extends HookWidget {
   LoginScreen({Key? key}) : super(key: key);
@@ -15,16 +17,91 @@ class LoginScreen extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isVisible = useState(false);
     return Scaffold(
       body: SafeArea(
         child: Center(
-          child: _buildContent(context),
+          child: _buildBody(isVisible),
         ),
       ),
     );
   }
 
-  Widget _buildContent(BuildContext context) {
+  _buildBody(ValueNotifier<bool> isVisible) {
+    return BlocBuilder<LoginBloc, LoginState>(
+      builder: (context, state) {
+        switch (state.runtimeType) {
+          case LoginInitialState:
+            return _buildContent(context, isVisible);
+
+          case LoginLoadingState:
+            Fluttertoast.showToast(
+              msg: 'Loading',
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+            );
+            return const CircularProgressIndicator();
+
+          case LoginErrorEvent:
+            Fluttertoast.showToast(
+              msg: 'Error',
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+            );
+            return AlertDialog(
+              title: const Text('Error Occured'),
+              content: Text(state.error!.message!),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    BlocProvider.of<LoginBloc>(context).add(
+                      const LoginInitialEvent(),
+                    );
+                    Fluttertoast.showToast(
+                      msg: 'Error',
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                    );
+                  },
+                  child: const Text('Retry'),
+                )
+              ],
+            );
+
+          case LoginSuccessState:
+            Fluttertoast.showToast(
+              msg: 'Success Di Login',
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+            );
+            return AlertDialog(
+              title: const Text('Success'),
+              content: const Text('Click OK to continue'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    AppRouter.push(
+                      context,
+                      Screens.story,
+                      args: state.response!.loginResult.token,
+                    );
+                  },
+                  child: const Text('OK  '),
+                )
+              ],
+            );
+
+          default:
+            return _buildContent(context, isVisible);
+        }
+      },
+    );
+  }
+
+  Widget _buildContent(
+    BuildContext context,
+    ValueNotifier<bool> isVisible,
+  ) {
     return Scaffold(
       body: Center(
         child: SingleChildScrollView(
@@ -45,7 +122,7 @@ class LoginScreen extends HookWidget {
                 const SizedBox(
                   height: 16.0,
                 ),
-                _buildPasswordField(context),
+                _buildPasswordField(context, isVisible),
                 const SizedBox(
                   height: 16.0,
                 ),
@@ -79,9 +156,8 @@ class LoginScreen extends HookWidget {
     );
   }
 
-  Widget _buildPasswordField(BuildContext context) {
-    final isVisible = useState(false);
-
+  Widget _buildPasswordField(
+      BuildContext context, ValueNotifier<bool> isVisible) {
     return TextFormField(
       controller: _passwordController,
       obscureText: !isVisible.value,
@@ -110,7 +186,7 @@ class LoginScreen extends HookWidget {
       width: double.maxFinite,
       child: FilledButton(
         onPressed: () {
-          _login(context);
+          _loginUser(context);
         },
         child: const Text(
           'Login',
@@ -172,11 +248,11 @@ class LoginScreen extends HookWidget {
     return null;
   }
 
-  void _login(BuildContext context) {
+  void _loginUser(BuildContext context) {
     if (_emailController.text.isNotEmpty && _emailController.text.isNotEmpty) {
-      final email = _emailController.text;
-      final password = _passwordController.text;
-      BlocProvider.of<LoginBloc>(context).add(Login(email, password));
+      final email = _emailController.text.toString();
+      final password = _passwordController.text.toString();
+      BlocProvider.of<LoginBloc>(context).add(LoginUserEvent(email, password));
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(

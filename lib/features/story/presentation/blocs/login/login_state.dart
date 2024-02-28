@@ -1,24 +1,25 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_story_app/features/story/data/models/responses/login/login_response.dart';
 
 abstract class LoginState {
   final LoginResponse? response;
-  final String? message;
+  final DioException? error;
 
-  const LoginState({this.response, this.message});
+  LoginState({this.response, this.error});
 }
 
 class LoginInitialState extends LoginState {
-  const LoginInitialState();
+  LoginInitialState();
 }
 
 class LoginLoadingState extends LoginState {
-  const LoginLoadingState();
-}
-
-class LoginErrorState extends LoginState {
-  const LoginErrorState(String message) : super(message: message);
+  LoginLoadingState();
 }
 
 class LoginSuccessState extends LoginState {
-  const LoginSuccessState(LoginResponse response) : super(response: response);
+  LoginSuccessState(LoginResponse response) : super(response: response);
+}
+
+class LoginErrorState extends LoginState {
+  LoginErrorState(DioException error) : super(error: error);
 }

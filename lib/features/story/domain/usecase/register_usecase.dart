@@ -11,11 +11,11 @@ class RegisterUseCase
 
   @override
   Future<DataState<RegisterResponse>> call({RegisterParams? params}) {
-    return repository.registerUser(
-      params!.username,
-      params.email,
-      params.password,
-    );
+    final username = params!.username;
+    final email = params.email;
+    final password = params.password;
+
+    return repository.registerUser(username, email, password);
   }
 }
 

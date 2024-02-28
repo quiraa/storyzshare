@@ -1,25 +1,25 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_story_app/features/story/data/models/responses/register/register_response.dart';
 
 abstract class RegisterState {
   final RegisterResponse? response;
-  final String? message;
+  final DioException? error;
 
-  const RegisterState({this.response, this.message});
+  RegisterState({this.response, this.error});
 }
 
 class RegisterInitialState extends RegisterState {
-  const RegisterInitialState();
+  RegisterInitialState();
 }
 
 class RegisterLoadingState extends RegisterState {
-  const RegisterLoadingState();
-}
-
-class RegisterErrorState extends RegisterState {
-  const RegisterErrorState(String message) : super(message: message);
+  RegisterLoadingState();
 }
 
 class RegisterSuccessState extends RegisterState {
-  const RegisterSuccessState(RegisterResponse response)
-      : super(response: response);
+  RegisterSuccessState(RegisterResponse response) : super(response: response);
+}
+
+class RegisterErrorState extends RegisterState {
+  RegisterErrorState(DioException error) : super(error: error);
 }

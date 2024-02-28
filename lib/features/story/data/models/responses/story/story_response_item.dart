@@ -7,17 +7,17 @@ class StoryResponseItem {
   final String id;
   final String name;
   final String description;
-  final String createdAt;
   final String photoUrl;
-  final String lon;
-  final String lat;
+  final String createdAt;
+  final double lon;
+  final double lat;
 
   StoryResponseItem({
     required this.id,
     required this.name,
     required this.description,
-    required this.createdAt,
     required this.photoUrl,
+    required this.createdAt,
     required this.lon,
     required this.lat,
   });

@@ -10,7 +10,9 @@ class LoginUseCase implements UseCase<DataState<LoginResponse>, LoginParams> {
 
   @override
   Future<DataState<LoginResponse>> call({LoginParams? params}) {
-    return repository.loginUser(params!.email, params.password);
+    final email = params!.email;
+    final password = params.password;
+    return repository.loginUser(email, password);
   }
 }
 

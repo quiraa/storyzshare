@@ -22,7 +22,7 @@ class StoryBloc extends Bloc<StoryEvent, StoryState> {
     }
 
     if (state is DataError) {
-      emit(StoryErrorState(state.errorMessage!));
+      emit(StoryErrorState(state.error!));
     }
   }
 }

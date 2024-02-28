@@ -7,25 +7,52 @@ import 'package:flutter_story_app/features/story/presentation/blocs/register/reg
 class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
   final RegisterUseCase registerUseCase;
 
-  RegisterBloc(this.registerUseCase) : super(const RegisterInitialState()) {
-    // on<DefaultRegister>(onDefaultRegister);
-    on<Register>(onRegister);
+  RegisterBloc(this.registerUseCase) : super(RegisterInitialState()) {
+    on<RegisterInitialEvent>(onRegisterInitialEvent);
+    on<RegisterErrorEvent>(onRegisterErrorEvent);
+    on<RegisterLoadingEvent>(onRegisterLoadingEvent);
+    on<RegisterUserEvent>(onRegisterUserEvent);
   }
 
-  // void onDefaultRegister(DefaultRegister event, Emitter<RegisterState> emit) {}
-
-  void onRegister(
-    Register event,
+  void onRegisterUserEvent(
+    RegisterUserEvent event,
     Emitter<RegisterState> emit,
   ) async {
-    final dataState = await registerUseCase();
+    emit(RegisterLoadingState());
+
+    final dataState = await registerUseCase(
+      params: RegisterParams(
+        event.username!,
+        event.email!,
+        event.password!,
+      ),
+    );
 
     if (dataState is DataSuccess) {
       emit(RegisterSuccessState(dataState.data!));
+    } else {
+      emit(RegisterErrorState(dataState.error!));
     }
+  }
 
-    if (dataState is DataError) {
-      emit(RegisterErrorState(dataState.errorMessage!));
-    }
+  void onRegisterLoadingEvent(
+    RegisterLoadingEvent event,
+    Emitter<RegisterState> emit,
+  ) {
+    emit(RegisterLoadingState());
+  }
+
+  void onRegisterErrorEvent(
+    RegisterErrorEvent event,
+    Emitter<RegisterState> emit,
+  ) {
+    emit(RegisterErrorState(event.error!));
+  }
+
+  void onRegisterInitialEvent(
+    RegisterInitialEvent event,
+    Emitter<RegisterState> emit,
+  ) {
+    emit(RegisterInitialState());
   }
 }

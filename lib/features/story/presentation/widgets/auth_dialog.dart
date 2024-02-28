@@ -14,6 +14,15 @@ class LoadingDialog extends StatelessWidget {
   }
 }
 
+Future<void> _loadingDialog(BuildContext context) {
+  return showDialog(
+    context: context,
+    builder: (context) {
+      return const LoadingDialog();
+    },
+  );
+}
+
 class ErrorDialog extends StatelessWidget {
   final String? message;
 
@@ -34,6 +43,15 @@ class ErrorDialog extends StatelessWidget {
       ],
     );
   }
+}
+
+Future<void> _errorDialog(BuildContext context, String? message) {
+  return showDialog(
+    context: context,
+    builder: (context) {
+      return ErrorDialog(message: message);
+    },
+  );
 }
 
 class SuccessDialog extends StatelessWidget {
@@ -58,4 +76,13 @@ class SuccessDialog extends StatelessWidget {
       ],
     );
   }
+}
+
+Future<void> _successDialog(BuildContext context, String? message) {
+  return showDialog(
+    context: context,
+    builder: (context) {
+      return SuccessDialog(message: message);
+    },
+  );
 }

@@ -1,10 +1,11 @@
+import 'package:flutter_story_app/core/constants/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserPreference {
   late SharedPreferences prefs;
 
-  static const _tokenKey = 'tokenKey';
-  static const _loginKey = 'loginToken';
+  static const String _tokenKey = 'tokenKey';
+  static const String _loginKey = 'loginToken';
 
   UserPreference() {
     initPreference();
@@ -18,10 +19,10 @@ class UserPreference {
   bool? get isLoggedIn => prefs.getBool(_loginKey);
 
   set token(String? value) {
-    prefs.setString(_tokenKey, value ?? '');
+    prefs.setString(Constants.tokenKey, value ?? '');
   }
 
   set isLoggedIn(bool? value) {
-    prefs.setBool(_loginKey, value ?? false);
+    prefs.setBool(Constants.loginKey, value ?? false);
   }
 }

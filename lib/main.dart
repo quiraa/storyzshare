@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_story_app/config/routes/route_config.dart';
 import 'package:flutter_story_app/di/injection.dart';
+import 'package:flutter_story_app/features/story/presentation/blocs/detail/detail_bloc.dart';
 import 'package:flutter_story_app/features/story/presentation/blocs/login/login_bloc.dart';
 import 'package:flutter_story_app/features/story/presentation/blocs/register/register_bloc.dart';
 import 'package:flutter_story_app/features/story/presentation/blocs/story/story_bloc.dart';
 import 'package:flutter_story_app/features/story/presentation/blocs/story/story_event.dart';
-import 'package:flutter_story_app/features/story/presentation/screens/register_screen.dart';
+import 'package:flutter_story_app/features/story/presentation/screens/story_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,18 +23,17 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider<LoginBloc>(
-          create: (context) => injection(),
-        ),
-        BlocProvider<RegisterBloc>(
-          create: (context) => injection(),
-        ),
+        BlocProvider<LoginBloc>(create: (context) => injection()),
+        BlocProvider<RegisterBloc>(create: (context) => injection()),
         BlocProvider<StoryBloc>(
           create: (context) => injection()..add(const GetStoriesEvent()),
         ),
+        BlocProvider<DetailBloc>(
+          create: (context) => injection(),
+        )
       ],
       child: MaterialApp(
-        title: 'Flutter Story App',
+        title: 'Story App',
         onGenerateRoute: generateRoute,
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(
@@ -42,7 +42,7 @@ class MyApp extends StatelessWidget {
           useMaterial3: true,
         ),
         debugShowCheckedModeBanner: false,
-        home: RegisterScreen(),
+        home: StoryScreen(),
       ),
     );
   }

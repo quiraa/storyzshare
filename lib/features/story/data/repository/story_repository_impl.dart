@@ -1,4 +1,7 @@
+import 'package:dio/dio.dart';
+import 'package:flutter_story_app/core/constants/constants.dart';
 import 'package:flutter_story_app/core/state/data_state.dart';
+import 'package:flutter_story_app/features/story/data/models/responses/detail/detail_response.dart';
 import 'package:flutter_story_app/features/story/data/models/responses/login/login_response.dart';
 import 'package:flutter_story_app/features/story/data/models/responses/register/register_response.dart';
 import 'package:flutter_story_app/features/story/data/models/responses/story/story_response.dart';
@@ -12,16 +15,34 @@ class StoryRepositoryImpl implements StoryRepository {
   StoryRepositoryImpl(this.api);
 
   @override
-  Future<DataState<StoryResponse>> getStories(String token) async {
+  Future<DataState<StoryResponse>> getStories() async {
     try {
-      final response = await api.getAllStories('Bearer $token');
-      if (!response.data.error) {
-        return DataSuccess(response.data);
-      } else {
-        return DataError(response.data.message);
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString(Constants.tokenKey);
+
+      if (token == null) {
+        return DataError(
+          DioException(
+            requestOptions: RequestOptions(path: ''),
+          ),
+        );
       }
-    } catch (err) {
-      return DataError(err.toString());
+
+      final storiesResponse = await api.getAllStories('Bearer $token');
+      if (!storiesResponse.data.error) {
+        return DataSuccess(storiesResponse.data);
+      } else {
+        return DataError(
+          DioException(
+            error: storiesResponse.response.statusMessage,
+            response: storiesResponse.response,
+            type: DioExceptionType.badResponse,
+            requestOptions: storiesResponse.response.requestOptions,
+          ),
+        );
+      }
+    } on DioException catch (err) {
+      return DataError(err);
     }
   }
 
@@ -31,17 +52,28 @@ class StoryRepositoryImpl implements StoryRepository {
     String password,
   ) async {
     try {
-      final response = await api.loginUser(email, password);
-      if (!response.data.error) {
-        final token = response.data.loginResult.token;
+      final loginResponse = await api.loginUser(email, password);
+
+      if (!loginResponse.data.error) {
+        final token = loginResponse.data.loginResult.token;
         await saveTokenToPreferences(token);
+        print('USER TOKEN : $token');
+
         await saveSessionToPreferences(true);
-        return DataSuccess(response.data);
+
+        return DataSuccess(loginResponse.data);
       } else {
-        return DataError(response.data.message);
+        return DataError(
+          DioException(
+            error: loginResponse.response.statusMessage,
+            response: loginResponse.response,
+            type: DioExceptionType.badResponse,
+            requestOptions: loginResponse.response.requestOptions,
+          ),
+        );
       }
-    } catch (err) {
-      return DataError(err.toString());
+    } on DioException catch (err) {
+      return DataError(err);
     }
   }
 
@@ -52,24 +84,70 @@ class StoryRepositoryImpl implements StoryRepository {
     String password,
   ) async {
     try {
-      final response = await api.registerUser(username, email, password);
-      if (!response.data.error) {
-        return DataSuccess(response.data);
+      final registerResponse = await api.registerUser(
+        username,
+        email,
+        password,
+      );
+
+      if (!registerResponse.data.error) {
+        return DataSuccess(registerResponse.data);
       } else {
-        return DataError(response.data.message);
+        return DataError(
+          DioException(
+            error: registerResponse.response.statusMessage,
+            response: registerResponse.response,
+            type: DioExceptionType.badResponse,
+            requestOptions: registerResponse.response.requestOptions,
+          ),
+        );
       }
-    } catch (err) {
-      return DataError(err.toString());
+    } on DioException catch (err) {
+      return DataError(err);
+    }
+  }
+
+  @override
+  Future<DataState<DetailResponse>> getDetailStory(String storyId) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString(Constants.tokenKey);
+
+      if (token == null) {
+        return DataError(
+          DioException(
+            requestOptions: RequestOptions(path: ''),
+          ),
+        );
+      }
+
+      final detailResponse = await api.getDetailStory('Bearer $token', storyId);
+
+      if (!detailResponse.data.error) {
+        return DataSuccess(detailResponse.data);
+      } else {
+        return DataError(
+          DioException(
+            error: detailResponse.response.statusMessage,
+            response: detailResponse.response,
+            type: DioExceptionType.badResponse,
+            requestOptions: detailResponse.response.requestOptions,
+          ),
+        );
+      }
+    } on DioException catch (err) {
+      return DataError(err);
     }
   }
 }
 
 Future<void> saveTokenToPreferences(String token) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  await prefs.setString('token', token);
+  await prefs.setString(Constants.tokenKey, token);
+  print('USER TOKEN SAVED TO PREFERENCE: $token');
 }
 
 Future<void> saveSessionToPreferences(bool isLoggedIn) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  await prefs.setBool('isLoggedIn', isLoggedIn);
+  await prefs.setBool(Constants.loginKey, isLoggedIn);
 }

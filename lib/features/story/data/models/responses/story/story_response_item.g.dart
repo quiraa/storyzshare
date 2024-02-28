@@ -11,10 +11,10 @@ StoryResponseItem _$StoryResponseItemFromJson(Map<String, dynamic> json) =>
       id: json['id'] as String,
       name: json['name'] as String,
       description: json['description'] as String,
-      createdAt: json['createdAt'] as String,
       photoUrl: json['photoUrl'] as String,
-      lon: json['lon'] as String,
-      lat: json['lat'] as String,
+      createdAt: json['createdAt'] as String,
+      lon: (json['lon'] == null ? 0.0 : json['lon'] as num).toDouble(),
+      lat: (json['lat'] == null ? 0.0 : json['lat'] as num).toDouble(),
     );
 
 Map<String, dynamic> _$StoryResponseItemToJson(StoryResponseItem instance) =>
@@ -22,8 +22,8 @@ Map<String, dynamic> _$StoryResponseItemToJson(StoryResponseItem instance) =>
       'id': instance.id,
       'name': instance.name,
       'description': instance.description,
-      'createdAt': instance.createdAt,
       'photoUrl': instance.photoUrl,
+      'createdAt': instance.createdAt,
       'lon': instance.lon,
       'lat': instance.lat,
     };
