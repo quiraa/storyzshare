@@ -4,20 +4,19 @@ import 'package:flutter_story_app/features/story/data/models/responses/detail/de
 import 'package:flutter_story_app/features/story/domain/repository/story_repository.dart';
 
 class GetDetailStoryUseCase
-    implements UseCase<DataState<DetailResponse>, DetailStoryParams> {
+    implements UseCase<DataState<DetailResponse>, GetDetailStoryParams> {
   final StoryRepository repository;
 
   GetDetailStoryUseCase(this.repository);
 
   @override
-  Future<DataState<DetailResponse>> call({DetailStoryParams? params}) {
-    final id = params!.storyId;
-    return repository.getDetailStory(id);
+  Future<DataState<DetailResponse>> call({GetDetailStoryParams? params}) {
+    return repository.getDetailStory(params!.storyId);
   }
 }
 
-class DetailStoryParams {
+class GetDetailStoryParams {
   final String storyId;
 
-  const DetailStoryParams(this.storyId);
+  const GetDetailStoryParams(this.storyId);
 }

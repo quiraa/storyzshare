@@ -1,16 +1,17 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_story_app/features/story/data/repository/story_repository_impl.dart';
-// import 'package:flutter_story_app/features/story/data/shared_preferencec/user_preference.dart';
 import 'package:flutter_story_app/features/story/data/sources/api/api_service.dart';
 import 'package:flutter_story_app/features/story/domain/repository/story_repository.dart';
 import 'package:flutter_story_app/features/story/domain/usecase/get_detail_story_usecase.dart';
 import 'package:flutter_story_app/features/story/domain/usecase/get_stories_usecase.dart';
 import 'package:flutter_story_app/features/story/domain/usecase/login_usecase.dart';
 import 'package:flutter_story_app/features/story/domain/usecase/register_usecase.dart';
+import 'package:flutter_story_app/features/story/domain/usecase/upload_story_usecase.dart';
 import 'package:flutter_story_app/features/story/presentation/blocs/detail/detail_bloc.dart';
 import 'package:flutter_story_app/features/story/presentation/blocs/login/login_bloc.dart';
 import 'package:flutter_story_app/features/story/presentation/blocs/register/register_bloc.dart';
 import 'package:flutter_story_app/features/story/presentation/blocs/story/story_bloc.dart';
+import 'package:flutter_story_app/features/story/presentation/blocs/upload/upload_bloc.dart';
 import 'package:get_it/get_it.dart';
 
 final injection = GetIt.instance;
@@ -51,6 +52,12 @@ Future<void> initializeDependencies() async {
     ),
   );
 
+  injection.registerSingleton<UploadStoryUseCase>(
+    UploadStoryUseCase(
+      injection(),
+    ),
+  );
+
   injection.registerSingleton<GetDetailStoryUseCase>(
     GetDetailStoryUseCase(
       injection(),
@@ -73,6 +80,12 @@ Future<void> initializeDependencies() async {
 
   injection.registerFactory<StoryBloc>(
     () => StoryBloc(
+      injection(),
+    ),
+  );
+
+  injection.registerFactory<UploadBloc>(
+    () => UploadBloc(
       injection(),
     ),
   );

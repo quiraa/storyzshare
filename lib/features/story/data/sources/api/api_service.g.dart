@@ -125,7 +125,7 @@ class _ApiService implements ApiService {
   @override
   Future<HttpResponse<DetailResponse>> getDetailStory(
     String authorization,
-    String id,
+    String storyId,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -140,7 +140,7 @@ class _ApiService implements ApiService {
     )
             .compose(
               _dio.options,
-              'stories/${id}',
+              'stories/${storyId}',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -150,6 +150,66 @@ class _ApiService implements ApiService {
               baseUrl,
             ))));
     final value = DetailResponse.fromJson(_result.data!);
+    final httpResponse = HttpResponse(value, _result);
+    return httpResponse;
+  }
+
+  @override
+  Future<HttpResponse<UploadResponse>> uploadStory(
+    String authorization,
+    String description,
+    File photo,
+    Float? lat,
+    Float? lon,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{r'Authorization': authorization};
+    _headers.removeWhere((k, v) => v == null);
+    final _data = FormData();
+    _data.fields.add(MapEntry(
+      'description',
+      description,
+    ));
+    _data.files.add(MapEntry(
+      'photo',
+      MultipartFile.fromFileSync(
+        photo.path,
+        filename: photo.path.split(Platform.pathSeparator).last,
+      ),
+    ));
+    if (lat != null) {
+      _data.fields.add(MapEntry(
+        'lat',
+        lat.toString(),
+      ));
+    }
+    if (lon != null) {
+      _data.fields.add(MapEntry(
+        'lon',
+        lon.toString(),
+      ));
+    }
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<HttpResponse<UploadResponse>>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+      contentType: 'multipart/form-data',
+    )
+            .compose(
+              _dio.options,
+              'stories',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = UploadResponse.fromJson(_result.data!);
     final httpResponse = HttpResponse(value, _result);
     return httpResponse;
   }

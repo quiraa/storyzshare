@@ -1,11 +1,14 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_story_app/features/story/data/models/responses/story/story_response_item.dart';
+import 'package:flutter_story_app/features/story/data/models/responses/detail/detail_response.dart';
 
 abstract class DetailState {
-  final StoryResponseItem? story;
+  final DetailResponse? response;
   final DioException? error;
 
-  const DetailState({this.story, this.error});
+  const DetailState({
+    this.response,
+    this.error,
+  });
 }
 
 class DetailLoadingState extends DetailState {
@@ -17,5 +20,5 @@ class DetailErrorState extends DetailState {
 }
 
 class DetailSuccessState extends DetailState {
-  const DetailSuccessState(StoryResponseItem story) : super(story: story);
+  const DetailSuccessState(DetailResponse response) : super(response: response);
 }

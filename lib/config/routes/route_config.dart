@@ -4,6 +4,7 @@ import 'package:flutter_story_app/features/story/presentation/screens/detail_scr
 import 'package:flutter_story_app/features/story/presentation/screens/login_screen.dart';
 import 'package:flutter_story_app/features/story/presentation/screens/register_screen.dart';
 import 'package:flutter_story_app/features/story/presentation/screens/settings_screen.dart';
+import 'package:flutter_story_app/features/story/presentation/screens/splash_screen.dart';
 import 'package:flutter_story_app/features/story/presentation/screens/story_screen.dart';
 import 'package:flutter_story_app/features/story/presentation/screens/upload_screen.dart';
 
@@ -16,19 +17,23 @@ PageRoute getPageRoute(String? routeName, Widget? screen) {
 
 Route<dynamic> generateRoute(RouteSettings settings) {
   switch (settings.name) {
+    case Screens.splash:
+      return getPageRoute(
+        settings.name,
+        const SplashScreen(),
+      );
+
+    case Screens.detail:
+      final storyId = settings.arguments as String;
+      return getPageRoute(
+        settings.name,
+        DetailScreen(storyId: storyId),
+      );
+
     case Screens.story:
       return getPageRoute(
         settings.name,
         const StoryScreen(),
-      );
-
-    case Screens.detail:
-      final args = settings.arguments as String;
-      return getPageRoute(
-        settings.name,
-        DetailScreen(
-          storyId: args,
-        ),
       );
 
     case Screens.login:
@@ -40,7 +45,7 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case Screens.settings:
       return getPageRoute(
         settings.name,
-        SettingsScreen(),
+        const SettingsScreen(),
       );
 
     case Screens.register:

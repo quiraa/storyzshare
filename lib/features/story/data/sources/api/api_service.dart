@@ -1,8 +1,12 @@
+import 'dart:ffi';
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:flutter_story_app/features/story/data/models/responses/detail/detail_response.dart';
 import 'package:flutter_story_app/features/story/data/models/responses/login/login_response.dart';
 import 'package:flutter_story_app/features/story/data/models/responses/register/register_response.dart';
 import 'package:flutter_story_app/features/story/data/models/responses/story/story_response.dart';
+import 'package:flutter_story_app/features/story/data/models/responses/upload/upload_response.dart';
 import 'package:retrofit/retrofit.dart';
 
 part 'api_service.g.dart';
@@ -34,6 +38,16 @@ abstract class ApiService {
   @GET('stories/{id}')
   Future<HttpResponse<DetailResponse>> getDetailStory(
     @Header('Authorization') String authorization,
-    @Path() String id,
+    @Path('id') String storyId,
+  );
+
+  @MultiPart()
+  @POST('stories')
+  Future<HttpResponse<UploadResponse>> uploadStory(
+    @Header('Authorization') String authorization,
+    @Part(name: 'description') String description,
+    @Part(name: 'photo') File photo,
+    @Part(name: 'lat') Float? lat,
+    @Part(name: 'lon') Float? lon,
   );
 }

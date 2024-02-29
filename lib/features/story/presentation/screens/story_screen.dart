@@ -18,27 +18,9 @@ class StoryScreen extends HookWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _appBar(context),
       body: SafeArea(
         child: _buildBody(),
       ),
-      floatingActionButton: _fabUpload(context),
-    );
-  }
-
-  PreferredSizeWidget _appBar(BuildContext context) {
-    return AppBar(
-      title: const Text('Story App'),
-      centerTitle: true,
-      actions: [
-        Padding(
-          padding: const EdgeInsets.only(right: 16.0),
-          child: IconButton(
-            onPressed: () => AppRouter.push(context, Screens.settings),
-            icon: const Icon(Icons.settings_rounded),
-          ),
-        )
-      ],
     );
   }
 
@@ -70,9 +52,9 @@ class StoryScreen extends HookWidget {
           case StorySuccessState:
             return StoryContent(
               listStory: state.response!.listStory,
-              onStoryClicked: (String? storyId) {
+              onStoryClicked: (String storyId) {
                 BlocProvider.of<DetailBloc>(context).add(
-                  GetDetailStoryEvent(storyId ?? ''),
+                  GetDetailStoryEvent(storyId),
                 );
                 AppRouter.push(context, Screens.detail, args: storyId);
               },
@@ -84,20 +66,11 @@ class StoryScreen extends HookWidget {
       },
     );
   }
-
-  Widget _fabUpload(BuildContext context) {
-    return FloatingActionButton(
-      onPressed: () => AppRouter.push(context, Screens.upload),
-      child: const Icon(
-        Icons.upload_file_rounded,
-      ),
-    );
-  }
 }
 
 class StoryContent extends HookWidget {
-  final List<StoryResponseItem>? listStory;
-  final void Function(String? storyId)? onStoryClicked;
+  final List<StoryResponseItem> listStory;
+  final void Function(String storyId) onStoryClicked;
 
   const StoryContent({
     Key? key,
@@ -107,15 +80,42 @@ class StoryContent extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    switch (listStory != null && listStory!.isNotEmpty) {
-      case true:
-        return AvailableStoryContent(
-          listStory: listStory,
-          onStoryClicked: onStoryClicked,
-        );
+    return Scaffold(
+      appBar: _appBar(context),
+      floatingActionButton: _fabUpload(context),
+      body: listStory.isNotEmpty
+          ? AvailableStoryContent(
+              listStory: listStory,
+              onStoryClicked: onStoryClicked,
+            )
+          : const EmptyContentState(),
+    );
+  }
 
-      case false:
-        return const EmptyContentState();
-    }
+  PreferredSizeWidget _appBar(BuildContext context) {
+    return AppBar(
+      title: const Text('Story App'),
+      centerTitle: true,
+      automaticallyImplyLeading: false,
+      surfaceTintColor: Colors.white,
+      actions: [
+        Padding(
+          padding: const EdgeInsets.only(right: 16.0),
+          child: IconButton(
+            onPressed: () => AppRouter.push(context, Screens.settings),
+            icon: const Icon(Icons.settings_rounded),
+          ),
+        )
+      ],
+    );
+  }
+
+  Widget _fabUpload(BuildContext context) {
+    return FloatingActionButton(
+      onPressed: () => AppRouter.push(context, Screens.upload),
+      child: const Icon(
+        Icons.upload_file_rounded,
+      ),
+    );
   }
 }

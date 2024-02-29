@@ -12,15 +12,15 @@ class DetailBloc extends Bloc<DetailEvent, DetailState> {
   }
 
   void onGetDetailStoryEvent(
-      GetDetailStoryEvent event, Emitter<DetailState> emit) async {
+    GetDetailStoryEvent event,
+    Emitter<DetailState> emit,
+  ) async {
     final state = await getDetailStoryUseCase(
-      params: DetailStoryParams(
-        event.storyId!,
-      ),
+      params: GetDetailStoryParams(event.storyId!),
     );
 
     if (state is DataSuccess) {
-      emit(DetailSuccessState(state.data!.story));
+      emit(DetailSuccessState(state.data!));
     }
 
     if (state is DataError) {

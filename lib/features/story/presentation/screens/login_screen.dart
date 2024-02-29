@@ -7,7 +7,6 @@ import 'package:flutter_story_app/config/themes/typography.dart';
 import 'package:flutter_story_app/features/story/presentation/blocs/login/login_bloc.dart';
 import 'package:flutter_story_app/features/story/presentation/blocs/login/login_event.dart';
 import 'package:flutter_story_app/features/story/presentation/blocs/login/login_state.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 class LoginScreen extends HookWidget {
   LoginScreen({Key? key}) : super(key: key);
@@ -35,19 +34,9 @@ class LoginScreen extends HookWidget {
             return _buildContent(context, isVisible);
 
           case LoginLoadingState:
-            Fluttertoast.showToast(
-              msg: 'Loading',
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.BOTTOM,
-            );
             return const CircularProgressIndicator();
 
           case LoginErrorEvent:
-            Fluttertoast.showToast(
-              msg: 'Error',
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.BOTTOM,
-            );
             return AlertDialog(
               title: const Text('Error Occured'),
               content: Text(state.error!.message!),
@@ -57,11 +46,6 @@ class LoginScreen extends HookWidget {
                     BlocProvider.of<LoginBloc>(context).add(
                       const LoginInitialEvent(),
                     );
-                    Fluttertoast.showToast(
-                      msg: 'Error',
-                      toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.BOTTOM,
-                    );
                   },
                   child: const Text('Retry'),
                 )
@@ -69,11 +53,6 @@ class LoginScreen extends HookWidget {
             );
 
           case LoginSuccessState:
-            Fluttertoast.showToast(
-              msg: 'Success Di Login',
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.BOTTOM,
-            );
             return AlertDialog(
               title: const Text('Success'),
               content: const Text('Click OK to continue'),

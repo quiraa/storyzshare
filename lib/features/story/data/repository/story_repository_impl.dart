@@ -1,13 +1,16 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
-import 'package:flutter_story_app/core/constants/constants.dart';
 import 'package:flutter_story_app/core/state/data_state.dart';
 import 'package:flutter_story_app/features/story/data/models/responses/detail/detail_response.dart';
 import 'package:flutter_story_app/features/story/data/models/responses/login/login_response.dart';
 import 'package:flutter_story_app/features/story/data/models/responses/register/register_response.dart';
 import 'package:flutter_story_app/features/story/data/models/responses/story/story_response.dart';
+import 'package:flutter_story_app/features/story/data/models/responses/upload/upload_response.dart';
+import 'package:flutter_story_app/features/story/data/preferences/user_preference.dart';
 import 'package:flutter_story_app/features/story/data/sources/api/api_service.dart';
 import 'package:flutter_story_app/features/story/domain/repository/story_repository.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_story_app/helpers/helpers.dart';
 
 class StoryRepositoryImpl implements StoryRepository {
   final ApiService api;
@@ -17,8 +20,7 @@ class StoryRepositoryImpl implements StoryRepository {
   @override
   Future<DataState<StoryResponse>> getStories() async {
     try {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      String? token = prefs.getString(Constants.tokenKey);
+      String? token = await UserPreference.getToken();
 
       if (token == null) {
         return DataError(
@@ -55,12 +57,7 @@ class StoryRepositoryImpl implements StoryRepository {
       final loginResponse = await api.loginUser(email, password);
 
       if (!loginResponse.data.error) {
-        final token = loginResponse.data.loginResult.token;
-        await saveTokenToPreferences(token);
-        print('USER TOKEN : $token');
-
-        await saveSessionToPreferences(true);
-
+        await UserPreference.setToken(loginResponse.data.loginResult.token);
         return DataSuccess(loginResponse.data);
       } else {
         return DataError(
@@ -108,10 +105,51 @@ class StoryRepositoryImpl implements StoryRepository {
   }
 
   @override
+  Future<DataState<UploadResponse>> uploadStory(
+    File photo,
+    String description,
+  ) async {
+    try {
+      String? token = await UserPreference.getToken();
+      File compressedPhoto = await Helpers.compressImage(photo);
+
+      if (token == null) {
+        return DataError(
+          DioException(
+            requestOptions: RequestOptions(path: ''),
+          ),
+        );
+      }
+
+      final uploadResponse = await api.uploadStory(
+        'Bearer $token',
+        description,
+        compressedPhoto,
+        null,
+        null,
+      );
+
+      if (!uploadResponse.data.error) {
+        return DataSuccess(uploadResponse.data);
+      } else {
+        return DataError(
+          DioException(
+            error: uploadResponse.response.statusMessage,
+            response: uploadResponse.response,
+            type: DioExceptionType.badResponse,
+            requestOptions: uploadResponse.response.requestOptions,
+          ),
+        );
+      }
+    } on DioException catch (err) {
+      return DataError(err);
+    }
+  }
+
+  @override
   Future<DataState<DetailResponse>> getDetailStory(String storyId) async {
     try {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      String? token = prefs.getString(Constants.tokenKey);
+      String? token = await UserPreference.getToken();
 
       if (token == null) {
         return DataError(
@@ -129,8 +167,8 @@ class StoryRepositoryImpl implements StoryRepository {
         return DataError(
           DioException(
             error: detailResponse.response.statusMessage,
-            response: detailResponse.response,
             type: DioExceptionType.badResponse,
+            response: detailResponse.response,
             requestOptions: detailResponse.response.requestOptions,
           ),
         );
@@ -139,15 +177,4 @@ class StoryRepositoryImpl implements StoryRepository {
       return DataError(err);
     }
   }
-}
-
-Future<void> saveTokenToPreferences(String token) async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  await prefs.setString(Constants.tokenKey, token);
-  print('USER TOKEN SAVED TO PREFERENCE: $token');
-}
-
-Future<void> saveSessionToPreferences(bool isLoggedIn) async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  await prefs.setBool(Constants.loginKey, isLoggedIn);
 }

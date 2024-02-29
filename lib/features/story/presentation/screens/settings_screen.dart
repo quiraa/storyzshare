@@ -18,6 +18,7 @@ class SettingsScreen extends HookWidget {
     return AppBar(
       title: const Text('Settings'),
       centerTitle: true,
+      automaticallyImplyLeading: false,
       leading: IconButton(
           onPressed: () => AppRouter.pop(context),
           icon: const Icon(Icons.arrow_back_ios_new)),

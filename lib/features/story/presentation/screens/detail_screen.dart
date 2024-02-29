@@ -7,11 +7,10 @@ import 'package:flutter_story_app/config/themes/typography.dart';
 import 'package:flutter_story_app/features/story/data/models/responses/story/story_response_item.dart';
 import 'package:flutter_story_app/features/story/presentation/blocs/detail/detail_bloc.dart';
 import 'package:flutter_story_app/features/story/presentation/blocs/detail/detail_state.dart';
-import 'package:flutter_story_app/features/story/presentation/widgets/content_state.dart';
 import 'package:flutter_story_app/helpers/helpers.dart';
 
 class DetailScreen extends HookWidget {
-  final String storyId;
+  final String? storyId;
 
   const DetailScreen({
     Key? key,
@@ -30,37 +29,33 @@ class DetailScreen extends HookWidget {
       builder: (context, state) {
         switch (state.runtimeType) {
           case DetailLoadingState:
-            return const LoadingContentState();
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
 
           case DetailErrorState:
-            return const Center(
-              child: Text('Error'),
+            return Center(
+              child: Text(
+                state.error!.message!,
+                textAlign: TextAlign.center,
+              ),
             );
 
           case DetailSuccessState:
-            return DetailContent(item: state.story!);
+            return Scaffold(
+              appBar: _appBar(context),
+              body: _buildContent(
+                context,
+                state.response!.story,
+              ),
+            );
 
           default:
-            return const SizedBox();
+            return const Center(
+              child: Text('Failed to get Story'),
+            );
         }
       },
-    );
-  }
-}
-
-class DetailContent extends HookWidget {
-  final StoryResponseItem item;
-
-  const DetailContent({
-    Key? key,
-    required this.item,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _appBar(context),
-      body: _buildBody(context),
     );
   }
 
@@ -75,20 +70,22 @@ class DetailContent extends HookWidget {
     );
   }
 
-  Widget _buildBody(BuildContext context) {
+  Widget _buildContent(BuildContext context, StoryResponseItem story) {
     return SingleChildScrollView(
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildImageBody(context),
-          _buildBody(context),
+          _buildImageBody(context, story),
+          _buildDescriptionBody(context, story),
         ],
       ),
     );
   }
 
-  Widget _buildImageBody(BuildContext context) {
+  Widget _buildImageBody(BuildContext context, StoryResponseItem story) {
     return CachedNetworkImage(
-      imageUrl: item.photoUrl,
+      imageUrl: story.photoUrl,
       placeholder: (context, url) => const Padding(
         padding: EdgeInsets.all(32.0),
         child: CircularProgressIndicator(),
@@ -103,7 +100,7 @@ class DetailContent extends HookWidget {
     );
   }
 
-  Widget _buildDescriptionBody(BuildContext context) {
+  Widget _buildDescriptionBody(BuildContext context, StoryResponseItem story) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -111,17 +108,17 @@ class DetailContent extends HookWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            item.name,
+            story.name,
             style: StoryTypography.detailTitle,
           ),
           const SizedBox(height: 16.0),
           Text(
-            Helpers.formatDate(item.createdAt),
+            Helpers.formatDate(story.createdAt),
             style: StoryTypography.detailDate,
           ),
           const SizedBox(height: 16.0),
           Text(
-            item.description,
+            story.description,
             style: StoryTypography.detailDescription,
           ),
         ],

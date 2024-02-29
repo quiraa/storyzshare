@@ -7,4 +7,5 @@ abstract class Screens {
   static const String settings = '/settings';
   static const String upload = '/upload';
   static const String detail = '/detail';
+  static const String splash = '/splash';
 }

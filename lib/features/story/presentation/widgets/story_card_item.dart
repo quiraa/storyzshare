@@ -5,8 +5,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_story_app/helpers/helpers.dart';
 
 class AvailableStoryContent extends StatelessWidget {
-  final List<StoryResponseItem>? listStory;
-  final void Function(String? storyId)? onStoryClicked;
+  final List<StoryResponseItem> listStory;
+  final void Function(String storyId) onStoryClicked;
 
   const AvailableStoryContent({
     Key? key,
@@ -18,12 +18,12 @@ class AvailableStoryContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView.separated(
       padding: const EdgeInsets.all(16.0),
-      itemCount: listStory?.length ?? 0,
+      itemCount: listStory.length,
       separatorBuilder: (context, index) => const SizedBox(
         height: 16.0,
       ),
       itemBuilder: (context, index) {
-        final StoryResponseItem story = listStory![index];
+        final StoryResponseItem story = listStory[index];
         return StoryCardItem(
           story: story,
           onStoryClicked: onStoryClicked,
@@ -35,7 +35,7 @@ class AvailableStoryContent extends StatelessWidget {
 
 class StoryCardItem extends StatelessWidget {
   final StoryResponseItem? story;
-  final void Function(String? storyId)? onStoryClicked;
+  final void Function(String storyId) onStoryClicked;
 
   const StoryCardItem({
     Key? key,
@@ -49,8 +49,8 @@ class StoryCardItem extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: () {
-          if (onStoryClicked != null && story != null) {
-            onStoryClicked!(story!.id);
+          if (story != null) {
+            onStoryClicked(story!.id);
           }
         },
         child: Row(
