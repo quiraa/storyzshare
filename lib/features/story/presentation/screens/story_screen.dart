@@ -9,6 +9,8 @@ import 'package:flutter_story_app/features/story/presentation/blocs/detail/detai
 import 'package:flutter_story_app/features/story/presentation/blocs/story/story_State.dart';
 import 'package:flutter_story_app/features/story/presentation/blocs/story/story_bloc.dart';
 import 'package:flutter_story_app/features/story/presentation/blocs/story/story_event.dart';
+import 'package:flutter_story_app/features/story/presentation/blocs/upload/upload_bloc.dart';
+import 'package:flutter_story_app/features/story/presentation/blocs/upload/upload_event.dart';
 import 'package:flutter_story_app/features/story/presentation/widgets/content_state.dart';
 import 'package:flutter_story_app/features/story/presentation/widgets/story_card_item.dart';
 
@@ -112,7 +114,12 @@ class StoryContent extends HookWidget {
 
   Widget _fabUpload(BuildContext context) {
     return FloatingActionButton(
-      onPressed: () => AppRouter.push(context, Screens.upload),
+      onPressed: () {
+        BlocProvider.of<UploadBloc>(context).add(
+          const UploadInitialEvent(),
+        );
+        AppRouter.push(context, Screens.upload);
+      },
       child: const Icon(
         Icons.upload_file_rounded,
       ),

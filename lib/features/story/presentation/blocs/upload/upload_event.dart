@@ -7,6 +7,10 @@ abstract class UploadEvent {
   const UploadEvent({this.photo, this.description});
 }
 
+class UploadInitialEvent extends UploadEvent {
+  const UploadInitialEvent();
+}
+
 class UploadStoryEvent extends UploadEvent {
   const UploadStoryEvent(
     File photo,

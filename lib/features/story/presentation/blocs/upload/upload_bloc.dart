@@ -8,6 +8,7 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
   final UploadStoryUseCase uploadStoryUseCase;
 
   UploadBloc(this.uploadStoryUseCase) : super(const UploadInitialState()) {
+    on<UploadInitialEvent>(onUploadInitialEvent);
     on<UploadStoryEvent>(onUploadStoryEvent);
   }
 
@@ -28,5 +29,12 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
     if (dataState is DataError) {
       emit(UploadErrorState(dataState.error!));
     }
+  }
+
+  void onUploadInitialEvent(
+    UploadInitialEvent event,
+    Emitter<UploadState> emit,
+  ) {
+    emit(const UploadInitialState());
   }
 }

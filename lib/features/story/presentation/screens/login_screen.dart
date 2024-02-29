@@ -59,11 +59,7 @@ class LoginScreen extends HookWidget {
               actions: [
                 TextButton(
                   onPressed: () {
-                    AppRouter.push(
-                      context,
-                      Screens.story,
-                      args: state.response!.loginResult.token,
-                    );
+                    AppRouter.pushAndRemoveUntil(context, Screens.story);
                   },
                   child: const Text('OK  '),
                 )
