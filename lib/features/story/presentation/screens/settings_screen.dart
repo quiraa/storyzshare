@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_story_app/config/routes/route_config.dart';
 import 'package:flutter_story_app/config/routes/screens.dart';
 import 'package:flutter_story_app/features/story/data/preferences/user_preference.dart';
+import 'package:flutter_story_app/features/story/presentation/blocs/login/login_bloc.dart';
+import 'package:flutter_story_app/features/story/presentation/blocs/login/login_event.dart';
 
 class SettingsScreen extends HookWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -120,6 +123,7 @@ class SettingsScreen extends HookWidget {
     bool? confirmed = await showConfirmationDialog(context);
     if (confirmed == true) {
       await UserPreference.clearToken();
+      BlocProvider.of<LoginBloc>(context).add(const LoginInitialEvent());
       AppRouter.pushAndRemoveUntil(context, Screens.login);
     }
   }

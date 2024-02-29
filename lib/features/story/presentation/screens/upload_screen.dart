@@ -1,7 +1,6 @@
 // ignore_for_file: must_be_immutable
 
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -284,13 +283,10 @@ class UploadScreen extends HookWidget {
     BuildContext context,
     ValueNotifier<File?> imageState,
   ) async {
-    // Lakukan validasi di sini, misalnya cek apakah gambar sudah dipilih dan deskripsi tidak kosong
-
     final imageFile = imageState.value;
     final description = _descriptionController.text;
 
     if (imageFile == null) {
-      // Tampilkan pesan kesalahan jika gambar tidak dipilih
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Please select an image.'),
@@ -300,7 +296,6 @@ class UploadScreen extends HookWidget {
     }
 
     if (description.isEmpty) {
-      // Tampilkan pesan kesalahan jika deskripsi kosong
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Please fill the description field.'),
@@ -308,8 +303,6 @@ class UploadScreen extends HookWidget {
       );
       return;
     }
-
-    // Panggil event UploadStoryEvent dengan menggunakan Bloc
     BlocProvider.of<UploadBloc>(context).add(
       UploadStoryEvent(
         imageFile,

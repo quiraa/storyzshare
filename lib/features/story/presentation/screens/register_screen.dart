@@ -200,7 +200,7 @@ class RegisterScreen extends HookWidget {
           width: 8.0,
         ),
         TextButton(
-          onPressed: () => AppRouter.push(context, Screens.login),
+          onPressed: () => AppRouter.pushAndRemoveUntil(context, Screens.login),
           child: const Text(
             'Login',
             style: StoryTypography.authSubtitle,
@@ -211,7 +211,6 @@ class RegisterScreen extends HookWidget {
   }
 
   void _togglePasswordVisibility(ValueNotifier<bool> passwordVisible) {
-    // Periksa apakah teks password sedang terlihat atau tersembunyi, lalu ubah nilainya
     passwordVisible.value = !passwordVisible.value;
   }
 
@@ -239,7 +238,7 @@ class RegisterScreen extends HookWidget {
     if (value == null || value.isEmpty) {
       return 'Please enter an email';
     }
-    // Regular expression untuk memeriksa format email
+
     String pattern = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b';
     RegExp regExp = RegExp(pattern);
     if (!regExp.hasMatch(value)) {

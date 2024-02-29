@@ -185,7 +185,8 @@ class LoginScreen extends HookWidget {
           width: 8.0,
         ),
         TextButton(
-          onPressed: () => AppRouter.push(context, Screens.register),
+          onPressed: () =>
+              AppRouter.pushAndRemoveUntil(context, Screens.register),
           child: const Text(
             'Register',
             style: StoryTypography.authSubtitle,
