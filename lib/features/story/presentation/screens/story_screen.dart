@@ -11,7 +11,6 @@ import 'package:flutter_story_app/features/story/presentation/blocs/story/story_
 import 'package:flutter_story_app/features/story/presentation/blocs/story/story_event.dart';
 import 'package:flutter_story_app/features/story/presentation/blocs/upload/upload_bloc.dart';
 import 'package:flutter_story_app/features/story/presentation/blocs/upload/upload_event.dart';
-import 'package:flutter_story_app/features/story/presentation/widgets/content_state.dart';
 import 'package:flutter_story_app/features/story/presentation/widgets/story_card_item.dart';
 
 class StoryScreen extends HookWidget {
@@ -85,12 +84,10 @@ class StoryContent extends HookWidget {
     return Scaffold(
       appBar: _appBar(context),
       floatingActionButton: _fabUpload(context),
-      body: listStory.isNotEmpty
-          ? AvailableStoryContent(
-              listStory: listStory,
-              onStoryClicked: onStoryClicked,
-            )
-          : const EmptyContentState(),
+      body: AvailableStoryContent(
+        listStory: listStory,
+        onStoryClicked: onStoryClicked,
+      ),
     );
   }
 

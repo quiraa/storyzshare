@@ -7,6 +7,7 @@ import 'package:flutter_story_app/config/themes/typography.dart';
 import 'package:flutter_story_app/features/story/presentation/blocs/register/register_bloc.dart';
 import 'package:flutter_story_app/features/story/presentation/blocs/register/register_event.dart';
 import 'package:flutter_story_app/features/story/presentation/blocs/register/register_state.dart';
+import 'package:flutter_story_app/helpers/helpers.dart';
 
 class RegisterScreen extends HookWidget {
   RegisterScreen({Key? key}) : super(key: key);
@@ -121,7 +122,7 @@ class RegisterScreen extends HookWidget {
         label: Text('Username'),
         prefixIcon: Icon(Icons.person),
       ),
-      validator: _validateUsername,
+      validator: (value) => Helpers().validateUsername(value),
       keyboardType: TextInputType.emailAddress,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       textInputAction: TextInputAction.next,
@@ -138,7 +139,7 @@ class RegisterScreen extends HookWidget {
         label: Text('Email'),
         prefixIcon: Icon(Icons.email),
       ),
-      validator: _validateEmail,
+      validator: (value) => Helpers().validateEmail(value),
       keyboardType: TextInputType.emailAddress,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       textInputAction: TextInputAction.next,
@@ -159,13 +160,13 @@ class RegisterScreen extends HookWidget {
         label: const Text('Password'),
         prefixIcon: const Icon(Icons.lock),
         suffixIcon: IconButton(
-          onPressed: () => _togglePasswordVisibility(isVisible),
+          onPressed: () => Helpers().togglePasswordVisibility(isVisible),
           icon: Icon(
             isVisible.value ? Icons.visibility : Icons.visibility_off,
           ),
         ),
       ),
-      validator: _validatePassword,
+      validator: (value) => Helpers().validatePassword(value),
       keyboardType: TextInputType.visiblePassword,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       textInputAction: TextInputAction.done,
@@ -208,43 +209,6 @@ class RegisterScreen extends HookWidget {
         )
       ],
     );
-  }
-
-  void _togglePasswordVisibility(ValueNotifier<bool> passwordVisible) {
-    passwordVisible.value = !passwordVisible.value;
-  }
-
-  String? _validateUsername(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Please enter a username';
-    }
-    if (value.length < 4) {
-      return 'Username must be at least 4 characters long';
-    }
-    return null;
-  }
-
-  String? _validatePassword(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Please enter a password';
-    }
-    if (value.length < 8) {
-      return 'Password must be at least 8 characters long';
-    }
-    return null;
-  }
-
-  String? _validateEmail(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Please enter an email';
-    }
-
-    String pattern = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b';
-    RegExp regExp = RegExp(pattern);
-    if (!regExp.hasMatch(value)) {
-      return 'Please enter a valid email';
-    }
-    return null;
   }
 
   void _registerUser(BuildContext context) {

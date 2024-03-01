@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class StoryTheme {
-  ThemeData storyTheme() {
-    return ThemeData(
-      textTheme: GoogleFonts.poppinsTextTheme(),
+  ThemeData lightStoryTheme() {
+    return ThemeData.light().copyWith(
       scaffoldBackgroundColor: Colors.white,
-      appBarTheme: appBarTheme(),
-      useMaterial3: true,
-      colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueGrey),
+      appBarTheme: const AppBarTheme(
+        color: Colors.white,
+        elevation: 0,
+        centerTitle: true,
+      ),
     );
   }
 
@@ -17,6 +17,17 @@ class StoryTheme {
       color: Colors.white,
       elevation: 0,
       centerTitle: true,
+    );
+  }
+
+  ThemeData darkStoryTheme() {
+    return ThemeData.dark().copyWith(
+      scaffoldBackgroundColor: Colors.black,
+      appBarTheme: const AppBarTheme(
+        color: Colors.black,
+        elevation: 0,
+        centerTitle: true,
+      ),
     );
   }
 }

@@ -22,14 +22,6 @@ class StoryRepositoryImpl implements StoryRepository {
     try {
       String? token = await UserPreference.getToken();
 
-      if (token == null) {
-        return DataError(
-          DioException(
-            requestOptions: RequestOptions(path: ''),
-          ),
-        );
-      }
-
       final storiesResponse = await api.getAllStories('Bearer $token');
       if (!storiesResponse.data.error) {
         return DataSuccess(storiesResponse.data);
@@ -112,14 +104,6 @@ class StoryRepositoryImpl implements StoryRepository {
     try {
       String? token = await UserPreference.getToken();
       File compressedPhoto = await Helpers.compressImage(photo);
-
-      if (token == null) {
-        return DataError(
-          DioException(
-            requestOptions: RequestOptions(path: ''),
-          ),
-        );
-      }
 
       final uploadResponse = await api.uploadStory(
         'Bearer $token',

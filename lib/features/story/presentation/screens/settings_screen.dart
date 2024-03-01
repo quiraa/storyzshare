@@ -1,22 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_story_app/config/routes/route_config.dart';
 import 'package:flutter_story_app/config/routes/screens.dart';
 import 'package:flutter_story_app/features/story/data/preferences/user_preference.dart';
 import 'package:flutter_story_app/features/story/presentation/blocs/login/login_bloc.dart';
 import 'package:flutter_story_app/features/story/presentation/blocs/login/login_event.dart';
+import 'package:flutter_story_app/features/story/presentation/providers/theme_provider.dart';
+import 'package:provider/provider.dart';
 
-class SettingsScreen extends HookWidget {
+class SettingsScreen extends StatelessWidget {
   const SettingsScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final switchState = useState<bool>(false);
-
     return Scaffold(
       appBar: _appBar(context),
-      body: _buildBody(context, switchState),
+      body: _buildBody(context),
     );
   }
 
@@ -31,16 +30,13 @@ class SettingsScreen extends HookWidget {
     );
   }
 
-  Widget _buildBody(
-    BuildContext context,
-    ValueNotifier<bool> switchState,
-  ) {
+  Widget _buildBody(BuildContext context) {
     return SingleChildScrollView(
       child: Column(
         children: [
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: _buildDarkModeButton(switchState),
+            child: _buildDarkModeButton(context),
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -51,29 +47,33 @@ class SettingsScreen extends HookWidget {
     );
   }
 
-  Widget _buildDarkModeButton(ValueNotifier<bool> switchState) {
+  Widget _buildDarkModeButton(BuildContext context) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Row(
-          children: [
-            const Expanded(
-              flex: 1,
-              child: Text(
-                'Enable Dark Mode',
-                style: TextStyle(
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.w600,
+        child: Consumer<ThemeProvider>(
+          builder: (context, themeProvider, child) {
+            return Row(
+              children: [
+                const Expanded(
+                  flex: 1,
+                  child: Text(
+                    'Enable Dark Mode',
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            Switch(
-              value: switchState.value,
-              onChanged: (bool newValue) {
-                switchState.value = newValue;
-              },
-            )
-          ],
+                Switch(
+                  value: themeProvider.themeMode == ThemeMode.dark,
+                  onChanged: (bool newValue) {
+                    themeProvider.toggleTheme(newValue);
+                  },
+                )
+              ],
+            );
+          },
         ),
       ),
     );
@@ -144,9 +144,7 @@ class SettingsScreen extends HookWidget {
               child: const Text('Cancel'),
             ),
             TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(true);
-              },
+              onPressed: () => Navigator.of(context).pop(true),
               child: const Text('Logout'),
             ),
           ],

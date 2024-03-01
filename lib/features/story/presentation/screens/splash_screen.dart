@@ -17,10 +17,8 @@ class SplashScreen extends HookWidget {
         final token = await UserPreference.getToken();
 
         if (token != null && token.isNotEmpty) {
-          print('TOKEN : $token');
           AppRouter.pushAndReplace(context, Screens.story);
         } else {
-          print('TOKEN : $token');
           AppRouter.pushAndReplace(context, Screens.login);
         }
       }

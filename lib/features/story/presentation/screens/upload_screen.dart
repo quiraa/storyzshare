@@ -79,7 +79,7 @@ class UploadScreen extends HookWidget {
                       const GetStoriesEvent(),
                     );
                   },
-                  child: const Text('Retry'),
+                  child: const Text('OK'),
                 ),
               ],
             );
@@ -323,6 +323,6 @@ class UploadScreen extends HookWidget {
       imageState.value = imageFile;
     }
 
-    Navigator.pop(context);
+    AppRouter.pop(context);
   }
 }

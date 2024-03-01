@@ -10,11 +10,18 @@ import 'package:flutter_story_app/features/story/presentation/blocs/register/reg
 import 'package:flutter_story_app/features/story/presentation/blocs/story/story_bloc.dart';
 import 'package:flutter_story_app/features/story/presentation/blocs/story/story_event.dart';
 import 'package:flutter_story_app/features/story/presentation/blocs/upload/upload_bloc.dart';
+import 'package:flutter_story_app/features/story/presentation/providers/theme_provider.dart';
+import 'package:provider/provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   initializeDependencies();
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider<ThemeProvider>(
+      create: (context) => ThemeProvider(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -23,23 +30,29 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider<LoginBloc>(create: (context) => injection()),
-        BlocProvider<RegisterBloc>(create: (context) => injection()),
-        BlocProvider<StoryBloc>(
-          create: (context) => injection()..add(const GetStoriesEvent()),
-        ),
-        BlocProvider<UploadBloc>(create: (context) => injection()),
-        BlocProvider<DetailBloc>(create: (context) => injection()),
-      ],
-      child: MaterialApp(
-        title: 'Story App',
-        onGenerateRoute: generateRoute,
-        theme: StoryTheme().storyTheme(),
-        debugShowCheckedModeBanner: false,
-        initialRoute: Screens.splash,
-      ),
+    return Consumer<ThemeProvider>(
+      builder: (context, provider, child) {
+        return MultiBlocProvider(
+          providers: [
+            BlocProvider<LoginBloc>(create: (context) => injection()),
+            BlocProvider<RegisterBloc>(create: (context) => injection()),
+            BlocProvider<StoryBloc>(
+              create: (context) => injection()..add(const GetStoriesEvent()),
+            ),
+            BlocProvider<UploadBloc>(create: (context) => injection()),
+            BlocProvider<DetailBloc>(create: (context) => injection()),
+          ],
+          child: MaterialApp(
+            themeMode: provider.themeMode,
+            darkTheme: StoryTheme().darkStoryTheme(),
+            theme: StoryTheme().lightStoryTheme(),
+            title: 'Story App',
+            onGenerateRoute: generateRoute,
+            debugShowCheckedModeBanner: false,
+            initialRoute: Screens.splash,
+          ),
+        );
+      },
     );
   }
 }
